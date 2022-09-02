@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.sparepart.dto.MachineDTO;
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.exception.WrongInputException;
 import com.sparepart.model.Company;
 import com.sparepart.model.Machine;
@@ -52,6 +53,17 @@ class MachineServiceTests {
 		assertEquals(2, service.getAllMachines().size());
 	}
 
+	@DisplayName("Machine Service Layer :: getMachineById")
+	@Test
+	void testGetMachineById() {
+		int MachineId = 1;
+		Machine newMachine = new Machine(MachineId, "Machine name", "Machine_desc", mt, company);
+		Optional<Machine> optionalMachine = Optional.of(newMachine);
+		when(repository.findById(MachineId)).thenReturn(optionalMachine);
+		
+		assertEquals(newMachine, service.getMachine(MachineId));
+	}
+	
 	@DisplayName("Machine Service Layer :: saveMachine")
 	@Test
 	void testSaveMachine() throws WrongInputException {
@@ -72,7 +84,7 @@ class MachineServiceTests {
 
 	@DisplayName("Machine Service Layer :: updateMachine")
 	@Test
-	void testUpdateMachine() throws WrongInputException {
+	void testUpdateMachine() throws WrongInputException, CanNotUpdateBrandNameException {
 		int MachineId = 1;
 		Machine newMachine = new Machine(MachineId, "Machine name", "Machine_desc", mt, null);
 		Optional<Machine> optionalMachine = Optional.of(newMachine);

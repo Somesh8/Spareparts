@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.NonNull;
@@ -29,10 +30,12 @@ public class Parts {
 	private int partId;
 	
 	@NotNull(message="Please provide name")
-	@NotBlank(message="Please provide name")
+	@NotBlank(message="Name is mandatory")
+	@Pattern(regexp = "^\\s*[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*$", message = "Wrong part name")
 	private String partName;
 	
 	@NotNull(message="Please provide description")
+	@NotBlank(message="Description is mandatory")
 	private String partDesc;
 	
 	@NotNull(message="Please provide Name")
@@ -40,7 +43,7 @@ public class Parts {
 	private double partCost;
 	
 	@NonNull
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "machineId", referencedColumnName = "machineId")
 	private Machine partMachineId;
 }

@@ -2,13 +2,12 @@ package com.sparepart.service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sparepart.dto.PartsDTO;
-import com.sparepart.exception.WrongInputException;
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.model.Machine;
 import com.sparepart.model.Parts;
 import com.sparepart.repository.MachineRepo;
@@ -18,22 +17,22 @@ import com.sparepart.repository.PartsRepo;
 public class PartsServiceImpl implements PartsService {
 	
 	@Autowired
-	PartsRepo repository;
+	private PartsRepo repository;
 	@Autowired
-	MachineRepo machineRepository;
+	private MachineRepo machineRepository;
 
-	String regex = "^\\s*[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*$";
-	
 	@Override
 	public List<Parts> getAllParts() {
 		return repository.findAll();
 	}
 
 	@Override
-	public Parts savePart(PartsDTO partsDto) throws WrongInputException {
-		if(!Pattern.compile(regex).matcher(partsDto.getPartName()).matches()) {
-			throw new WrongInputException("Wrong part name");
-		}
+	public Parts getPartById(int id) {
+		return repository.findById(id).get();
+	}
+	
+	@Override
+	public Parts savePart(PartsDTO partsDto) {
 		Parts parts= new Parts();
 		Machine machine = machineRepository.findById(partsDto.getPartMachineId()).get();
 		parts.setPartDesc(partsDto.getPartDesc());
@@ -43,15 +42,14 @@ public class PartsServiceImpl implements PartsService {
 	}
 
 	@Override
-	public Parts updatePart(Parts parts, int id) throws WrongInputException {
-		if(!Pattern.compile(regex).matcher(parts.getPartName()).matches()) {
-			throw new WrongInputException("Wrong part name");
-		}
-		
+	public Parts updatePart(Parts parts, int id) throws CanNotUpdateBrandNameException {
 		Parts partsDB = repository.findById(id).get();
 
 		if (Objects.nonNull(parts.getPartName())
 				&& !"".equalsIgnoreCase(parts.getPartName())) {
+			if (!parts.getPartName().contains(partsDB.getPartName())) {
+				throw new CanNotUpdateBrandNameException("Can not update brand name");
+			}
 			partsDB.setPartName(parts.getPartName());
 		}
 
@@ -78,4 +76,5 @@ public class PartsServiceImpl implements PartsService {
 	public List<Parts> searchAllParts(String token) {
 		return repository.findByPartNameContainingOrPartDescContaining(token, token);
 	}
+
 }

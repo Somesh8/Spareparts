@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.exception.WrongInputException;
 import com.sparepart.model.MachineType;
 import com.sparepart.repository.MachineTypeRepo;
@@ -37,6 +38,17 @@ class MachineTypeServiceTests {
 		assertEquals(2, service.getAllMachineTypes().size());
 	}
 	
+	@DisplayName("MachineType Service Layer :: getMachineTypeById")
+	@Test
+	void testGetMachineTypeById() {
+		int machineTypeId = 1;
+		MachineType newMachineType = new MachineType(machineTypeId, "MachintType name", "MachintType_desc");
+		Optional<MachineType> optionalCompany = Optional.of(newMachineType);
+		when(repository.findById(machineTypeId)).thenReturn(optionalCompany);
+		
+		assertEquals(newMachineType, service.getMachineType(machineTypeId));
+	}
+	
 	@DisplayName("MachineType Service Layer :: saveMachineType")
 	@Test
 	void testSaveMachineType() throws WrongInputException {
@@ -47,7 +59,7 @@ class MachineTypeServiceTests {
 	
 	@DisplayName("MachineType Service Layer :: updateMachineType")
 	@Test
-	void testUpdateMachineType() throws WrongInputException {
+	void testUpdateMachineType() throws WrongInputException, CanNotUpdateBrandNameException {
 		int MachineTypeId = 1;
 		MachineType newMachineType = new MachineType(MachineTypeId, "MachintType name", "MachintType_desc");
 		Optional<MachineType> optionalMachineType = Optional.of(newMachineType);

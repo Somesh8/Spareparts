@@ -9,40 +9,41 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sparepart.exception.WrongInputException;
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.model.Company;
 import com.sparepart.service.CompanyService;
 
 @RestController
+@RequestMapping("/company")
 public class CompanyController {
 	
 	@Autowired
 	CompanyService service;
 	
-	@GetMapping(value="/companies")
+	@GetMapping
 	public List<Company> getAllCompanies() {
 		return service.getAllCompanies();
 	}
 	
-	@GetMapping(value="/company/{id}")
+	@GetMapping(value="/{id}")
 	public Company getCompanyById(@PathVariable("id") int id) {
 		return service.getCompanyById(id);
 	}
 	
-	@PostMapping(value="/company")
-	public Company saveCompany(@RequestBody Company Company) throws WrongInputException {
+	@PostMapping
+	public Company saveCompany(@RequestBody Company Company) {
 		return service.saveCompany(Company);
 	}
 	
-
-	@PutMapping(value="/company/{id}")
-	public Company updateCompany(@PathVariable("id") int id,@RequestBody Company Company) throws WrongInputException {
+	@PutMapping(value="/{id}")
+	public Company updateCompany(@PathVariable("id") int id,@RequestBody Company Company) throws CanNotUpdateBrandNameException {
 		return service.updateCompany(Company, id);
 	}
 	
-	@DeleteMapping(value="/company/{id}")
+	@DeleteMapping(value="/{id}")
 	public String deleteCompany(@PathVariable("id") int id) {
 		service.deleteCompany( id);
 		return "Deleted Successfully";

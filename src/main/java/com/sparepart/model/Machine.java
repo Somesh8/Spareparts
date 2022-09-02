@@ -11,8 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.lang.NonNull;
+import javax.validation.constraints.Pattern;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,12 +29,14 @@ public class Machine {
 	
 	@NotNull(message="Please provide name")
 	@NotBlank(message="Please provide name")
+	@Pattern(regexp = "^\\s*[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*$", message = "Wrong machine name")
 	private String machineName;
 	
 	@NotNull(message="Please provide description")
+	@NotBlank(message="Description is mandatory")
 	private String machineDesc;
 	
-	@NonNull
+	@NotNull(message="Please provide machine type")
 	@OneToOne
 	private MachineType machineType;
 	

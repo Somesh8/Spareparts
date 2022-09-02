@@ -2,14 +2,13 @@ package com.sparepart.service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sparepart.exception.WrongInputException;
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.model.MachineType;
 import com.sparepart.repository.MachineTypeRepo;
 
@@ -19,8 +18,6 @@ public class MachineTypeServiceImpl implements MachineTypeService {
 
 	@Autowired
 	MachineTypeRepo repository;
-
-	String regex = "^\\s*[A-Za-z]+(?:\\s+[A-Za-z]+)*\\s*$";
 	
 	@Override
 	public List<MachineType> getAllMachineTypes() {
@@ -28,21 +25,23 @@ public class MachineTypeServiceImpl implements MachineTypeService {
 	}
 
 	@Override
-	public MachineType saveMachineType(MachineType machineType) throws WrongInputException {
-		if(!Pattern.compile(regex).matcher(machineType.getMachineTypeName()).matches()) {
-			throw new WrongInputException("Wrong machine type name");
-		}
+	public MachineType getMachineType(int id) {
+		return repository.findById(id).get();
+	}
+
+	@Override
+	public MachineType saveMachineType(MachineType machineType) {
 		return repository.save(machineType);
 	}
 
 	@Override
-	public MachineType updateMachineType(MachineType machineType, int id) throws WrongInputException {
+	public MachineType updateMachineType(MachineType machineType, int id) throws CanNotUpdateBrandNameException {
 		MachineType machineTypeDB = repository.findById(id).get();
 
 		if (Objects.nonNull(machineType.getMachineTypeName())
 				&& !"".equalsIgnoreCase(machineType.getMachineTypeName())) {
-			if(!Pattern.compile(regex).matcher(machineType.getMachineTypeName()).matches()) {
-				throw new WrongInputException("Wrong machine type name");
+			if (!machineType.getMachineTypeName().contains(machineTypeDB.getMachineTypeName())) {
+				throw new CanNotUpdateBrandNameException("Can not update brand name");
 			}
 			machineTypeDB.setMachineTypeName(machineType.getMachineTypeName());
 		}
@@ -59,4 +58,5 @@ public class MachineTypeServiceImpl implements MachineTypeService {
 		MachineType machineTypeDB = repository.findById(id).get();
 		repository.delete(machineTypeDB);
 	}
+
 }

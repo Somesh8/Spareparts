@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.exception.WrongInputException;
 import com.sparepart.model.Company;
 import com.sparepart.repository.CompanyRepo;
@@ -47,6 +48,7 @@ class CompanyServiceTests {
 		
 		assertEquals(newCompany, service.getCompanyById(companyId));
 	}
+
 	@DisplayName("Company Service Layer :: saveCompany")
 	@Test
 	void testSaveCompany() throws WrongInputException {
@@ -57,7 +59,7 @@ class CompanyServiceTests {
 	
 	@DisplayName("Company Service Layer :: updateCompany")
 	@Test
-	void testUpdateCompany() throws WrongInputException {
+	void testUpdateCompany() throws WrongInputException, CanNotUpdateBrandNameException {
 		int companyId = 1;
 		Company newCompany = new Company(companyId, "Comp name", "Comp_desc");
 		Optional<Company> optionalCompany = Optional.of(newCompany);

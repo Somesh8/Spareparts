@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.sparepart.dto.PartsDTO;
+import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.exception.WrongInputException;
 import com.sparepart.model.Machine;
 import com.sparepart.model.MachineType;
@@ -48,10 +49,23 @@ class PartsServiceTests {
 		assertEquals(2, service.getAllParts().size());
 	}
 
+	@DisplayName("Parts Service Layer :: getMachineById")
+	@Test
+	void testGetMachineById() {
+		int partId = 1;
+		PartsDTO newPartsDto = new PartsDTO(1, "Name", "Desc", 10.00, mac.getMachineId());
+		Parts newParts1 = new Parts(newPartsDto.getPartId(), newPartsDto.getPartName(), newPartsDto.getPartDesc(),
+				newPartsDto.getPartCost(), mac);
+		Optional<Parts> optionalParts = Optional.of(newParts1);
+		when(repository.findById(partId)).thenReturn(optionalParts);
+		
+		assertEquals(newParts1, service.getPartById(partId));
+	}
+	
 	@DisplayName("Parts Service Layer :: saveParts")
 	@Test
 	void testSaveParts() throws WrongInputException {
-		PartsDTO newPartsDto = new PartsDTO(1, "Name", "DEsc", 10.00, mac.getMachineId());
+		PartsDTO newPartsDto = new PartsDTO(1, "Name", "Desc", 10.00, mac.getMachineId());
 		Parts newParts1 = new Parts(newPartsDto.getPartId(), newPartsDto.getPartName(), newPartsDto.getPartDesc(),
 				newPartsDto.getPartCost(), mac);
 		Optional<Machine> optionalMachine = Optional.of(mac);
@@ -63,7 +77,7 @@ class PartsServiceTests {
 
 	@DisplayName("Parts Service Layer :: updateParts")
 	@Test
-	void testUpdateParts() throws WrongInputException {
+	void testUpdateParts() throws CanNotUpdateBrandNameException {
 		int PartsId = 1;
 		Parts newParts = new Parts(PartsId, "Part name", "Part_desc", 10.00, mac);
 		Optional<Parts> optionalParts = Optional.of(newParts);
@@ -133,14 +147,4 @@ class PartsServiceTests {
 		assertTrue(thrown.getMessage().contains("No"));
 	}
 	
-	@DisplayName("Parts Service Layer :: savePartWrongInputExceptionHandle")
-	@Test
-	void testWrongInputException() {
-		PartsDTO newPartsDto = new PartsDTO(1, "123 ", "DEsc", 10.00, 0);
-		WrongInputException thrown = assertThrows(WrongInputException.class, () -> {
-			service.savePart(newPartsDto);
-		}, "Wrong part name");
-
-		assertTrue(thrown.getMessage().contains("Wrong"));
-	}
 }
