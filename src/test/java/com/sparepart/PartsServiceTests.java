@@ -8,9 +8,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,13 +41,17 @@ class PartsServiceTests {
 	@MockBean
 	private MachineRepo macRepository;
 
-	Machine mac = new Machine(1, "Name", "Desc", new MachineType(1, "MachintType_name", "MachintType_desc"), null);
+	private Machine mac = new Machine(1, "Name", "Desc", new MachineType(1, "MachintType_name", "MachintType_desc"), null);
 
+	private Parts part1 = new Parts(1, "Part_name", "Part_desc", 10.00, mac);
+	private Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 100.00, mac);
+	private List<Parts> parts = new ArrayList<>(Arrays.asList(
+			part1,part2));
+	
 	@DisplayName("Parts Service Layer :: getAllParts")
 	@Test
 	void testGetAllParts() {
-		when(repository.findAll()).thenReturn(Stream.of(new Parts(1, "Part_name", "Part_desc", 10.00, mac),
-				new Parts(2, "Part_name2", "Part_desc2", 100.00, mac)).toList());
+		when(repository.findAll()).thenReturn(parts);
 		assertEquals(2, service.getAllParts().size());
 	}
 
@@ -79,34 +85,29 @@ class PartsServiceTests {
 	@Test
 	void testUpdateParts() throws CanNotUpdateBrandNameException {
 		int PartsId = 1;
-		Parts newParts = new Parts(PartsId, "Part name", "Part_desc", 10.00, mac);
-		Optional<Parts> optionalParts = Optional.of(newParts);
+		Optional<Parts> optionalParts = Optional.of(part1);
 		when(repository.findById(PartsId)).thenReturn(optionalParts);
-		when(repository.save(newParts)).thenReturn(newParts);
-		assertEquals(newParts, service.updatePart(newParts, PartsId));
+		when(repository.save(part1)).thenReturn(part1);
+		assertEquals(part1, service.updatePart(part1, PartsId));
 	}
 
 	@DisplayName("Parts Service Layer :: deleteParts")
 	@Test
 	void testDeleteParts() {
-		Parts newParts = new Parts(1, "Part_name", "Part_desc", 10.00, mac);
-		Optional<Parts> optionalParts = Optional.of(newParts);
+		Optional<Parts> optionalParts = Optional.of(part1);
 		when(repository.findById(1)).thenReturn(optionalParts);
 
 		service.deletePart(1);
-		verify(repository, times(1)).delete(newParts);
+		verify(repository, times(1)).delete(part1);
 	}
 
 	@DisplayName("Parts Service Layer :: getPartsByMachine")
 	@Test
 	void testGetPartsByMachine() {
-		Parts part1 = new Parts(1, "Part_name1", "Part_desc1", 100.00, mac);
-		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 120.00, mac);
-
 		Optional<Machine> optionalMachine = Optional.of(mac);
 		when(macRepository.findById(mac.getMachineId())).thenReturn(optionalMachine);
 
-		when(repository.findByPartMachineId(mac)).thenReturn(Stream.of(part1, part2).toList());
+		when(repository.findByPartMachineId(mac)).thenReturn(parts);
 		assertEquals(2, service.getAllPartsForMachine(mac.getMachineId()).size());
 
 	}
@@ -115,11 +116,8 @@ class PartsServiceTests {
 	@Test
 	void testSearchAllParts() {
 		String token = "par";
-		Parts part1 = new Parts(1, "Part_name1", "Part_desc1", 100.00, mac);
-		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 120.00, mac);
-
 		when(repository.findByPartNameContainingOrPartDescContaining(token, token))
-				.thenReturn(Stream.of(part1, part2).toList());
+				.thenReturn(parts);
 		assertEquals(2, service.searchAllParts(token).size());
 	}
 
@@ -132,7 +130,6 @@ class PartsServiceTests {
 					newPartsDto.getPartCost(), null);
 			repository.save(newParts1);
 		}, "partMachineId id marked non null but is null");
-
 		assertTrue(thrown.getMessage().contains("null"));
 	}
 
@@ -143,8 +140,6 @@ class PartsServiceTests {
 		NoSuchElementException thrown = assertThrows(NoSuchElementException.class, () -> {
 			service.savePart(newPartsDto);
 		}, "No value present");
-
 		assertTrue(thrown.getMessage().contains("No"));
-	}
-	
+	}	
 }

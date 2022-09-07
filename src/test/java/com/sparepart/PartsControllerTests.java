@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,11 +44,15 @@ class PartsControllerTests {
 	private Machine mac = new Machine(1, "Name", "Desc", new MachineType(1, "MachintType_name", "MachintType_desc"),
 			company);
 
+	private Parts part1 = new Parts(1, "Part_name", "Part_desc", 10.00, mac);
+	private Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 100.00, mac);
+	private List<Parts> parts = new ArrayList<>(Arrays.asList(
+			part1,part2));
+	
 	@DisplayName("Parts controller Layer :: GET `/parts`")
 	@Test
 	void testGetAllMachines() throws Exception {
-		when(partsService.getAllParts()).thenReturn(Stream.of(new Parts(1, "Part_name", "Part_desc", 10.00, mac),
-				new Parts(2, "Part_name2", "Part_desc2", 100.00, mac)).toList());
+		when(partsService.getAllParts()).thenReturn(parts);
 
 		mockMvc.perform(get("/parts").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].part_id", is(1))).andExpect(jsonPath("$[0].part_name", is("Part_name")))
@@ -109,17 +115,11 @@ class PartsControllerTests {
 	@DisplayName("Parts controller Layer :: GET `/parts/machine/1`")
 	@Test
 	public void getPartByMachineTest() throws Exception {
-//		PartsDTO newPartsDto = new PartsDTO(1, "Name", "Desc", 10.00, mac.getMachineId());
-//		Parts newParts1 = new Parts(newPartsDto.getPartId(), newPartsDto.getPartName(), newPartsDto.getPartDesc(),
-//				newPartsDto.getPartCost(), mac);
-		Parts part1 = new Parts(1, "Part_name1", "Part_desc1", 100.00, mac);
-		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 120.00, mac);
-
-		when(partsService.getAllPartsForMachine(1)).thenReturn(Stream.of(part1, part2).toList());
+		when(partsService.getAllPartsForMachine(1)).thenReturn(parts);
 
 		mockMvc.perform(get("/parts/machine/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].part_id", is(1))).andExpect(jsonPath("$[0].part_name", is("Part_name1")))
-				.andExpect(jsonPath("$[0].part_desc", is("Part_desc1")));
+				.andExpect(jsonPath("$[0].part_id", is(1))).andExpect(jsonPath("$[0].part_name", is("Part_name")))
+				.andExpect(jsonPath("$[0].part_desc", is("Part_desc")));
 
 	}
 
@@ -127,16 +127,14 @@ class PartsControllerTests {
 	@Test
 	void testSearchAllParts() throws Exception {
 		String token = "par";
-		Parts part1 = new Parts(1, "Part_name1", "Part_desc1", 100.00, mac);
-		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 120.00, mac);
-
-		when(partsService.searchAllParts(token)).thenReturn(Stream.of(part1, part2).toList());
+		
+		when(partsService.searchAllParts(token)).thenReturn(parts);
 
 		mockMvc.perform(get("/parts/search?token="+token).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].part_id", is(1)))
-				.andExpect(jsonPath("$[0].part_name", is("Part_name1")))
-				.andExpect(jsonPath("$[0].part_desc", is("Part_desc1")));
+				.andExpect(jsonPath("$[0].part_name", is("Part_name")))
+				.andExpect(jsonPath("$[0].part_desc", is("Part_desc")));
 	}
 
 }

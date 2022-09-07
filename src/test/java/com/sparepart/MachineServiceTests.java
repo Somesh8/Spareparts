@@ -6,8 +6,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,10 +36,10 @@ class MachineServiceTests {
 
 	@MockBean
 	private MachineRepo repository;
-	
+
 	@MockBean
 	private MachineTypeRepo mtRepository;
-	
+
 	@MockBean
 	private CompanyRepo cmpRepository;
 
@@ -45,11 +47,15 @@ class MachineServiceTests {
 
 	private Company company = new Company(1, "Dummy Company Name", "Dummy_Company_Desc");
 
+	private Machine firstMachine = new Machine(1, "HP Pavilion 15", "Laptop", mt, null);
+	private Machine secondMachine = new Machine(2, "Machine_name2", "Machine_desc2", mt, null);
+
+	private List<Machine> machines = new ArrayList<>(Arrays.asList(firstMachine, secondMachine));
+
 	@DisplayName("Machine Service Layer :: getAllMachines")
 	@Test
 	void testGetAllMachines() {
-		when(repository.findAll()).thenReturn(Stream.of(new Machine(1, "Machine_name", "Machine_desc", mt, null),
-				new Machine(2, "Machine_name2", "Machine_desc2", mt, null)).toList());
+		when(repository.findAll()).thenReturn(machines);
 		assertEquals(2, service.getAllMachines().size());
 	}
 
@@ -57,51 +63,48 @@ class MachineServiceTests {
 	@Test
 	void testGetMachineById() {
 		int MachineId = 1;
-		Machine newMachine = new Machine(MachineId, "Machine name", "Machine_desc", mt, company);
-		Optional<Machine> optionalMachine = Optional.of(newMachine);
+		Optional<Machine> optionalMachine = Optional.of(firstMachine);
 		when(repository.findById(MachineId)).thenReturn(optionalMachine);
-		
-		assertEquals(newMachine, service.getMachine(MachineId));
+
+		assertEquals(firstMachine, service.getMachine(MachineId));
 	}
-	
+
 	@DisplayName("Machine Service Layer :: saveMachine")
 	@Test
 	void testSaveMachine() throws WrongInputException {
 		int MachineId = 1;
-		Machine newMachine = new Machine(MachineId, "Machine name", "Machine_desc", mt, company);
-		MachineDTO newMachineDto = new MachineDTO(1,"nm", "desc", mt.getMachineTypeId(), company.getCompanyId());
-		
+		MachineDTO newMachineDto = new MachineDTO(MachineId, firstMachine.getMachineName(),
+				firstMachine.getMachineDesc(), mt.getMachineTypeId(), company.getCompanyId());
+
 		Optional<Company> optionalCompany = Optional.of(company);
-		
+
 		Optional<MachineType> optionalMt = Optional.of(mt);
-		
+
 		when(cmpRepository.findById(newMachineDto.getCompanyId())).thenReturn(optionalCompany);
 		when(mtRepository.findById(newMachineDto.getMachineTypeId())).thenReturn(optionalMt);
-		
-		when(repository.save(any(Machine.class))).thenReturn(newMachine);
-		assertEquals(newMachine, service.saveMachine(newMachineDto));
+
+		when(repository.save(any(Machine.class))).thenReturn(firstMachine);
+		assertEquals(firstMachine, service.saveMachine(newMachineDto));
 	}
 
 	@DisplayName("Machine Service Layer :: updateMachine")
 	@Test
 	void testUpdateMachine() throws WrongInputException, CanNotUpdateBrandNameException {
 		int MachineId = 1;
-		Machine newMachine = new Machine(MachineId, "Machine name", "Machine_desc", mt, null);
-		Optional<Machine> optionalMachine = Optional.of(newMachine);
+		Optional<Machine> optionalMachine = Optional.of(firstMachine);
 		when(repository.findById(MachineId)).thenReturn(optionalMachine);
-		when(repository.save(newMachine)).thenReturn(newMachine);
-		assertEquals(newMachine, service.updateMachine(newMachine, MachineId));
+		when(repository.save(firstMachine)).thenReturn(firstMachine);
+		assertEquals(firstMachine, service.updateMachine(firstMachine, MachineId));
 	}
 
 	@DisplayName("Machine Service Layer :: deleteMachine")
 	@Test
 	void testDeleteMachine() {
-		Machine newMachine = new Machine(1, "Machine_name", "Machine_desc", mt, null);
-		Optional<Machine> optionalMachine = Optional.of(newMachine);
+		Optional<Machine> optionalMachine = Optional.of(firstMachine);
 		when(repository.findById(1)).thenReturn(optionalMachine);
 
 		service.deleteMachine(1);
-		verify(repository, times(1)).delete(newMachine);
+		verify(repository, times(1)).delete(firstMachine);
 	}
 
 }

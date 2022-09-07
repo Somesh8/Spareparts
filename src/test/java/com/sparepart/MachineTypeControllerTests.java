@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,80 +32,67 @@ class MachineTypeControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@MockBean
 	private MachineTypeService service;
+
+	private MachineType machineType1 = new MachineType(1, "MachineType_name", "MachineType_desc");
+	private MachineType machineType2 = new MachineType(2, "MachineType_name2", "MachineType_desc2");
+	private List<MachineType> machineTypes = new ArrayList<>(Arrays.asList(machineType1, machineType2));
 
 	@Test
 	@DisplayName("MachineType Controller :: GET `/machinetype` ")
 	public void getAllMachineType() throws Exception {
-		MachineType firstMachineType = new MachineType(1, "MachineType_name", "MachineType_desc");
-		when(service.getAllMachineTypes()).thenReturn(Stream
-				.of(firstMachineType, new MachineType(2, "MachineType_name2", "MachineType_desc2"))
-				.toList());
-		
-		mockMvc.perform(get("/machinetype").accept(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$[0].machine_type_id", is(1)))
-			.andExpect(jsonPath("$[0].machine_type_name", is("MachineType_name")))
-			.andExpect(jsonPath("$[0].machine_type_desc", is("MachineType_desc")))
-			.andExpect(jsonPath("$.length()", is(2)));
+		when(service.getAllMachineTypes()).thenReturn(machineTypes);
+
+		mockMvc.perform(get("/machinetype").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].machine_type_id", is(1)))
+				.andExpect(jsonPath("$[0].machine_type_name", is("MachineType_name")))
+				.andExpect(jsonPath("$[0].machine_type_desc", is("MachineType_desc")))
+				.andExpect(jsonPath("$.length()", is(2)));
 	}
-	
+
 	@DisplayName("MachineType controller Layer ::GET `/machinetype/1`")
 	@Test
-    public void getAllCompanysTest() throws Exception {
-		MachineType firstMachineType = new MachineType(1, "MachineType_name", "MachineType_desc");
-		
-		when(service.getMachineType(1)).thenReturn(firstMachineType);
+	public void getAllCompanysTest() throws Exception {
+		when(service.getMachineType(1)).thenReturn(machineType1);
 
-        mockMvc.perform(get("/machinetype/1").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.machine_type_id", is(1)))
-    			.andExpect(jsonPath("$.machine_type_name", is("MachineType_name")))
-    			.andExpect(jsonPath("$.machine_type_desc", is("MachineType_desc")));
+		mockMvc.perform(get("/machinetype/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.machine_type_id", is(1)))
+				.andExpect(jsonPath("$.machine_type_name", is("MachineType_name")))
+				.andExpect(jsonPath("$.machine_type_desc", is("MachineType_desc")));
 	}
-	
+
 	@DisplayName("MachineType controller Layer :: POST `/machinetype`")
 	@Test
-    public void testSaveMachineType() throws Exception {
-		MachineType newMachineType = new MachineType(1, "MachineType name", "MachineType_desc");
-
+	public void testSaveMachineType() throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(newMachineType);
-        
-        when(service.saveMachineType(newMachineType)).thenReturn(newMachineType); 
-        
-        mockMvc.perform(post("/machinetype")
-        		.contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .characterEncoding("utf-8"))
-                .andExpect(status().is2xxSuccessful());
-    }
+		String json = objectMapper.writeValueAsString(machineType1);
+
+		when(service.saveMachineType(machineType1)).thenReturn(machineType1);
+
+		mockMvc.perform(
+				post("/machinetype").contentType(MediaType.APPLICATION_JSON).content(json).characterEncoding("utf-8"))
+				.andExpect(status().is2xxSuccessful());
+	}
 
 	@DisplayName("MachineType controller Layer :: UPDATE `/machinetype/1")
 	@Test
-    public void testUpdateMachineType() throws Exception {
-		MachineType newMachineType = new MachineType(1, "MachineType name", "MachineType_desc");
-		
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(newMachineType);
-        
-        when(service.updateMachineType(newMachineType, 1)).thenReturn(newMachineType); 
-        
-        mockMvc.perform(put("/machinetype/{id}",1)
-        		.contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .characterEncoding("utf-8"))
-                .andExpect(status().is2xxSuccessful());
-    }
+	public void testUpdateMachineType() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(machineType1);
+
+		when(service.updateMachineType(machineType1, 1)).thenReturn(machineType1);
+
+		mockMvc.perform(put("/machinetype/{id}", 1).contentType(MediaType.APPLICATION_JSON).content(json)
+				.characterEncoding("utf-8")).andExpect(status().is2xxSuccessful());
+	}
 
 	@DisplayName("MachineType controller Layer :: DELETE `/machinetype/1`")
 	@Test
 	public void testMachineTypeDelete() throws Exception {
-	    mockMvc.perform(delete("/machinetype/{id}",11).accept(MediaType.APPLICATION_JSON)
-	            .contentType(MediaType.APPLICATION_JSON))
-	            .andExpect(status().isOk());
+		mockMvc.perform(delete("/machinetype/{id}", 11).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 
 }
