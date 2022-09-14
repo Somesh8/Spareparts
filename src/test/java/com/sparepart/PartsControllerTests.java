@@ -112,17 +112,6 @@ class PartsControllerTests {
 				.andExpect(status().isOk());
 	}
 
-	@DisplayName("Parts controller Layer :: GET `/parts/machine/1`")
-	@Test
-	public void getPartByMachineTest() throws Exception {
-		when(partsService.getAllPartsForMachine(1)).thenReturn(parts);
-
-		mockMvc.perform(get("/parts/machine/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].part_id", is(1))).andExpect(jsonPath("$[0].part_name", is("Part_name")))
-				.andExpect(jsonPath("$[0].part_desc", is("Part_desc")));
-
-	}
-
 	@DisplayName("Parts Controller Layer :: GET  `/parts/search?token=par`")
 	@Test
 	void testSearchAllParts() throws Exception {

@@ -35,11 +35,6 @@ public class PartsController {
 		return service.getPartById(id);
 	}
 	
-	@GetMapping(value="/machine/{mid}")
-	public List<Parts> getAllPartsForMachine(@PathVariable("mid") int cid) {
-		return service.getAllPartsForMachine(cid);
-	}
-	
 	@GetMapping(value="/search")
 	public List<Parts> searchAllParts(@RequestParam("token") String token) {
 		return service.searchAllParts(token);

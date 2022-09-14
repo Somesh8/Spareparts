@@ -27,6 +27,7 @@ import com.sparepart.dto.MachineDTO;
 import com.sparepart.model.Company;
 import com.sparepart.model.Machine;
 import com.sparepart.model.MachineType;
+import com.sparepart.model.Parts;
 import com.sparepart.service.MachineService;
 
 @SpringBootTest
@@ -108,6 +109,22 @@ class MachineControllerTests {
 		mockMvc.perform(
 				delete("/machine/{id}", 1).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
+	}
+	
+	@DisplayName("Parts controller Layer :: GET `/machine/parts/1`")
+	@Test
+	public void getPartByMachineTest() throws Exception {
+		Parts part1 = new Parts(1, "Part_name", "Part_desc", 10.00, firstMachine);
+		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 100.00, firstMachine);
+		List<Parts> parts = new ArrayList<>(Arrays.asList(
+				part1,part2));
+		
+		when(machineService.getAllPartsForMachine(1)).thenReturn(parts);
+
+		mockMvc.perform(get("/machine/parts/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].part_id", is(1))).andExpect(jsonPath("$[0].part_name", is("Part_name")))
+				.andExpect(jsonPath("$[0].part_desc", is("Part_desc")));
+
 	}
 
 }

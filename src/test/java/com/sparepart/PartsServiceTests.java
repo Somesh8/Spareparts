@@ -101,17 +101,6 @@ class PartsServiceTests {
 		verify(repository, times(1)).delete(part1);
 	}
 
-	@DisplayName("Parts Service Layer :: getPartsByMachine")
-	@Test
-	void testGetPartsByMachine() {
-		Optional<Machine> optionalMachine = Optional.of(mac);
-		when(macRepository.findById(mac.getMachineId())).thenReturn(optionalMachine);
-
-		when(repository.findByPartMachineId(mac)).thenReturn(parts);
-		assertEquals(2, service.getAllPartsForMachine(mac.getMachineId()).size());
-
-	}
-
 	@DisplayName("Parts Service Layer :: searchAllParts")
 	@Test
 	void testSearchAllParts() {

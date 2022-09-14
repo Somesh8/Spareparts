@@ -67,12 +67,6 @@ public class PartsServiceImpl implements PartsService {
 	}
 
 	@Override
-	public List<Parts> getAllPartsForMachine(int mid) {
-		Machine m = machineRepository.findById(mid).get();
-		return repository.findByPartMachineId(m);	
-	}
-
-	@Override
 	public List<Parts> searchAllParts(String token) {
 		return repository.findByPartNameContainingOrPartDescContaining(token, token);
 	}

@@ -19,7 +19,6 @@ public interface PartsService {
 	
 	public void deletePart(int id);
 	
-	public List<Parts> getAllPartsForMachine(int mid);
 	
 	public List<Parts> searchAllParts(String token);
 

@@ -23,9 +23,11 @@ import com.sparepart.exception.WrongInputException;
 import com.sparepart.model.Company;
 import com.sparepart.model.Machine;
 import com.sparepart.model.MachineType;
+import com.sparepart.model.Parts;
 import com.sparepart.repository.CompanyRepo;
 import com.sparepart.repository.MachineRepo;
 import com.sparepart.repository.MachineTypeRepo;
+import com.sparepart.repository.PartsRepo;
 import com.sparepart.service.MachineService;
 
 @SpringBootTest
@@ -39,6 +41,9 @@ class MachineServiceTests {
 
 	@MockBean
 	private MachineTypeRepo mtRepository;
+	
+	@MockBean
+	private PartsRepo partRepository;
 
 	@MockBean
 	private CompanyRepo cmpRepository;
@@ -107,4 +112,19 @@ class MachineServiceTests {
 		verify(repository, times(1)).delete(firstMachine);
 	}
 
+	@DisplayName("Machine Service Layer :: getAllPartsForMachine")
+	@Test
+	void testGetPartsByMachine() {
+		Parts part1 = new Parts(1, "Part_name", "Part_desc", 10.00, firstMachine);
+		Parts part2 = new Parts(2, "Part_name2", "Part_desc2", 100.00, firstMachine);
+		List<Parts> parts = new ArrayList<>(Arrays.asList(
+				part1,part2));
+		
+		Optional<Machine> optionalMachine = Optional.of(firstMachine);
+		when(repository.findById(firstMachine.getMachineId())).thenReturn(optionalMachine);
+
+		when(partRepository.findByPartMachineId(firstMachine)).thenReturn(parts);
+		assertEquals(2, service.getAllPartsForMachine(firstMachine.getMachineId()).size());
+
+	}
 }
