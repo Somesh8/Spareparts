@@ -42,7 +42,7 @@ public class ApplicationExceptionHandler {
 	}
 	
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler({WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
+	@ExceptionHandler({IllegalArgumentException.class, WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
 	public Map<String, String> handleInputRelatedException(Exception ex) {
 		Map<String, String> errors = new HashMap<>();
 		errors.put("message",ex.getMessage());
