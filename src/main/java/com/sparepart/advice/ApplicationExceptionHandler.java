@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -42,7 +43,7 @@ public class ApplicationExceptionHandler {
 	}
 	
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler({IllegalArgumentException.class, WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
+	@ExceptionHandler({BadCredentialsException.class, IllegalArgumentException.class, WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
 	public Map<String, String> handleInputRelatedException(Exception ex) {
 		Map<String, String> errors = new HashMap<>();
 		errors.put("message",ex.getMessage());

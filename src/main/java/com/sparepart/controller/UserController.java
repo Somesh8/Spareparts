@@ -28,9 +28,15 @@ public class UserController {
 		return service.getAllUsers();
 	}
 	
-	@GetMapping(value="/{id}")
-	public User getUser(@PathVariable("id") int id) {
-		return service.getUser(id);
+//	@GetMapping(value="/{id}")
+//	public User getUser(@PathVariable("id") int id) {
+//		return service.getUser(id);
+//	}
+	
+	@GetMapping(value="/{email}")
+	public User getUserByEmail(@PathVariable("email") String email) {
+		System.out.println(email);
+		return service.getUserByEmail(email);
 	}
 	
 	@PostMapping

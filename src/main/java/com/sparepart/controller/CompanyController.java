@@ -22,7 +22,7 @@ import com.sparepart.exception.CanNotUpdateBrandNameException;
 import com.sparepart.model.Company;
 import com.sparepart.service.CompanyService;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/company")
 public class CompanyController {
