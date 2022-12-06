@@ -1,10 +1,10 @@
 package com.sparepart.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 //import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -37,8 +37,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf()
 			.disable()
-			.authorizeHttpRequests()
+			.authorizeRequests()
 			.antMatchers("/api/v1/auth/**").permitAll()
+			.antMatchers(HttpMethod.OPTIONS).permitAll()
 			.anyRequest()
 			.authenticated()
 			.and()
@@ -77,17 +78,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		CorsConfiguration corsConfig = new CorsConfiguration();
 		corsConfig.setAllowCredentials(true);
 		corsConfig.addAllowedOriginPattern("*");
-		corsConfig.addAllowedOrigin("*");
 		corsConfig.addAllowedHeader("Authorization");
 		corsConfig.addAllowedHeader("Content-Type");
 		corsConfig.addAllowedHeader("Accept");
-//		corsConfig.addAllowedOrigin("**");         //'*' allows all endpoints, Provide your URL/endpoint, if any.
-//		corsConfig.addAllowedHeader("*");
 		corsConfig.addAllowedMethod("POST");
 		corsConfig.addAllowedMethod("GET");
 		corsConfig.addAllowedMethod("PUT");
 		corsConfig.addAllowedMethod("DELETE");
-		corsConfig.addAllowedMethod("OPTIONS");
+		corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
+		corsConfig.addAllowedMethod(HttpMethod.HEAD);
 
 		corsConfig.setMaxAge(3600L);
 		source.registerCorsConfiguration("/**", corsConfig);
@@ -95,4 +94,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //		FilterRegistrationBean frBean = new FilterRegistrationBean(new CorsFilter(source));
 //		return frBean;
 	}
+
  }

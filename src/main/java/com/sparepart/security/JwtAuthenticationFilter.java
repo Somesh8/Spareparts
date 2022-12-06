@@ -10,13 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.sparepart.model.User;
-import com.sparepart.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -68,7 +66,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			
 //			User user = this.userService.getUserByEmail(username);
 			User user = this.userService.loadUserByUsername(username);
-//			User user = this.
 			System.out.println("User "+user);
 			if(this.jwtTokenHelper.validateToken(token, user)) {
 				System.out.println("Valid JWT token"); 
@@ -83,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 		} else {
 			System.out.println("Username is null & context is null");
 		}
-		
+
 		filterChain.doFilter(request, response);
 		
 	}
