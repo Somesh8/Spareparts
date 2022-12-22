@@ -1,6 +1,10 @@
 package com.sparepart.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import com.sparepart.dto.UserDto;
 import com.sparepart.exception.CanNotUpdateBrandNameException;
@@ -21,4 +25,6 @@ public interface UserService {
 	public User getUserByEmail(String username);
 
 	public UserDto registerNewUser(UserDto userDto);
+
+	public ResponseEntity<Map<String, Object>> getAllUserWithPagination(Pageable paging);
 }

@@ -20,6 +20,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +45,7 @@ public class User implements UserDetails{
 	private String fullname;
 	
 	@NotNull(message="Please provide email")
+	@UniqueElements(message = "Email already exists")
 	private String email;
 	
 	@NotNull(message="Please provide password")

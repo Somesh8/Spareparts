@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.UnexpectedTypeException;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class ApplicationExceptionHandler {
 	}
 	
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler({BadCredentialsException.class, IllegalArgumentException.class, WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
+	@ExceptionHandler({BadCredentialsException.class, IllegalArgumentException.class, UnexpectedTypeException.class, WrongInputException.class, EmptyResultDataAccessException.class, HttpMessageNotReadableException.class, CanNotUpdateBrandNameException.class})
 	public Map<String, String> handleInputRelatedException(Exception ex) {
 		Map<String, String> errors = new HashMap<>();
 		errors.put("message",ex.getMessage());

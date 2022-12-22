@@ -1,6 +1,10 @@
 package com.sparepart.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import com.sparepart.dto.PartsDTO;
 import com.sparepart.exception.CanNotUpdateBrandNameException;
@@ -21,5 +25,7 @@ public interface PartsService {
 	
 	
 	public List<Parts> searchAllParts(String token);
+
+	public ResponseEntity<Map<String, Object>> getAllPartsWithPagination(Pageable paging);
 
 }

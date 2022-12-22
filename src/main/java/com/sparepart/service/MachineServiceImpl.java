@@ -1,11 +1,19 @@
 package com.sparepart.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.sparepart.dto.MachineDTO;
@@ -31,7 +39,19 @@ public class MachineServiceImpl implements MachineService {
 	CompanyRepo cmpRepository;
 	@Autowired
 	private PartsRepo partRepository;
+	
+	Pageable pageable = PageRequest.of(0, 3);
 
+	public static Map<String, Object> getResponse(List<Machine> companyList, int pageNumber, long totalElements,
+			int totalPages) {
+		Map<String, Object> response = new HashMap<>();
+		response.put("data", companyList);
+		response.put("currentPage", ++pageNumber);
+		response.put("totalItems", totalElements);
+		response.put("totalPages", totalPages);
+		return response;
+	}
+	
 	@Override
 	public List<Machine> getAllMachines() {
 		return repository.findAll();
@@ -83,5 +103,22 @@ public class MachineServiceImpl implements MachineService {
 		Machine m = repository.findById(machineId).get();
 		return partRepository.findByPartMachineId(m);
 //		return null;
+	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> getAllMachinesWithPagination(Pageable paging) {
+		List<Machine> machineList = new ArrayList<Machine>();
+		try {
+			Page<Machine> page = repository.findAll(paging);
+			if (page.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			machineList = page.getContent();
+			Map<String, Object> response = new HashMap<>();
+			response = getResponse(machineList, page.getNumber(), page.getTotalElements(), page.getTotalPages());
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

@@ -2,6 +2,8 @@ package com.sparepart.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.sparepart.model.Machine;
@@ -17,4 +19,5 @@ public interface PartsRepo extends JpaRepository<Parts, Integer>{
 
 	List<Parts> findByPartNameContainingOrPartDescContaining(String token, String token1);
 
+	Page<Parts> findAll(Pageable pageable);
 }

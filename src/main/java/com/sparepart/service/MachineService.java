@@ -1,6 +1,10 @@
 package com.sparepart.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import com.sparepart.dto.MachineDTO;
 import com.sparepart.exception.CanNotUpdateBrandNameException;
@@ -20,4 +24,6 @@ public interface MachineService {
 	public Machine getMachine(int id);
 
 	public List<Parts> getAllPartsForMachine(int machineId);
+
+	public ResponseEntity<Map<String, Object>> getAllMachinesWithPagination(Pageable paging);
 }
