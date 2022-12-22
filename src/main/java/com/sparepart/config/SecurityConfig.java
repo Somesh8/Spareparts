@@ -96,3 +96,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 
  }
+
+//
+//RUN DOCKER CONTAINER
+//
+//1.  Create Image using following command.
+//Run this command at Dockerfile location
+//`docker build -t sb-sparepart.jar . `
+//2. Run the create image with following command
+//` docker run -p 9090:8080 sb-sparepart.jar`
+//
+//
+//PUSH DOCKER IMG TO DOCKER HUB
+//
+//1. Login to docker (terminal)
+//`docker login`
+//2. add tag to image (if missing)
+//`docker tag sb-sparepart.jar somesh8/sb-sparepart.jar`
+//3. push image 
+//`docker push somesh8/sb-sparepart.jar`
